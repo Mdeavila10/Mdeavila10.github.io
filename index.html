@@ -1,12 +1,208 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-9">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Mi Página Web</title>
-
-    <meta name="description" content="Mi primera página web publicada con GitHub Pages">
-
-    <link rel="stylesheet" href="estilos.css">
+    <title>Vitrina Comercial - Productos Locales</title>
+    <!-- Tailwind CSS CDN para un diseño moderno y rápido -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Header / Barra de Navegación -->
+    <header class="bg-indigo-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                <i class="fa-solid fa-store text-3xl"></i>
+                <div>
+                    <h1 class="text-2xl font-bold">Vitrina Local</h1>
+                    <p class="text-indigo-200 text-sm">Descubre y apoya el comercio de la ciudad</p>
+                </div>
+            </div>
+            <!-- Buscador -->
+            <div class="w-full md:w-1/3">
+                <div class="relative">
+                    <input type="text" id="buscador" placeholder="Buscar productos, tiendas o categorías..." 
+                        class="w-full py-2 pl-10 pr-4 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filtros por categoría -->
+    <nav class="bg-white shadow-sm py-3 border-b">
+        <div class="container mx-auto px-4 flex space-x-2 overflow-x-auto whitespace-nowrap" id="contenedor-filtros">
+            <button onclick="filtrarCategoria('todos')" class="filtro-btn px-4 py-1.5 rounded-full bg-indigo-600 text-white text-sm font-medium transition active">Todos</button>
+            <button onclick="filtrarCategoria('Artesanías')" class="filtro-btn px-4 py-1.5 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition">Artesanías</button>
+            <button onclick="filtrarCategoria('Gastronomía')" class="filtro-btn px-4 py-1.5 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition">Gastronomía</button>
+            <button onclick="filtrarCategoria('Moda')" class="filtro-btn px-4 py-1.5 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition">Moda</button>
+            <button onclick="filtrarCategoria('Café')" class="filtro-btn px-4 py-1.5 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition">Café</button>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal (Catálogo) -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <div id="grid-productos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Los productos se cargan dinámicamente con JavaScript -->
+        </div>
+
+        <!-- Mensaje cuando no hay resultados -->
+        <div id="sin-resultados" class="hidden text-center py-16">
+            <i class="fa-solid fa-box-open text-5xl text-gray-300 mb-4"></i>
+            <p class="text-lg text-gray-500">No encontramos productos con ese criterio de búsqueda.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-auto">
+        <div class="container mx-auto px-4 text-center text-sm text-gray-400">
+            <p>&copy; 2026 Vitrina Local de la Ciudad. Impulsando el talento local.</p>
+        </div>
+    </footer>
+
+    <!-- Script JavaScript para la lógica de productos y filtros -->
+    <script>
+        // Lista de productos de ejemplo (Puedes agregar, quitar o editar los tuyos aquí)
+        const productos = [
+            {
+                id: 1,
+                nombre: "Sombrero Vueltiao Tradicional",
+                categoria: "Artesanías",
+                precio: 120000,
+                imagen: "https://images.unsplash.com/photo-1582533512718-74d7c9a4400e?auto=format&fit=crop&q=80&w=500",
+                tienda: "Artesanías del Caribe",
+                descripcion: "Tejido a mano por artesanos locales con caña flecha."
+            },
+            {
+                id: 2,
+                nombre: "Café Orgánico de Altura",
+                categoria: "Café",
+                precio: 25000,
+                imagen: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=500",
+                tienda: "Café de la Sierra",
+                descripcion: "Café tostado en grano, notas suaves y aroma incomparable (500g)."
+            },
+            {
+                id: 3,
+                nombre: "Mochila Wayuu Colorida",
+                categoria: "Artesanías",
+                precio: 150000,
+                imagen: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=500",
+                tienda: "Tejedores Ancestrales",
+                descripcion: "Diseño único hecho en crochet con patrones geométricos tradicionales."
+            },
+            {
+                id: 4,
+                nombre: "Dulces Típicos Variados",
+                categoria: "Gastronomía",
+                precio: 18000,
+                imagen: "https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?auto=format&fit=crop&q=80&w=500",
+                tienda: "Dulzura Local",
+                descripcion: "Bandeja de dulces tradicionales: alegría, millo, cocadas y conservas."
+            },
+            {
+                id: 5,
+                nombre: "Camisa Guayabera Artesanal",
+                categoria: "Moda",
+                precio: 95000,
+                imagen: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&q=80&w=500",
+                tienda: "Moda Tropical",
+                descripcion: "Fresca, elegante y con detalles bordados a mano."
+            },
+            {
+                id: 6,
+                nombre: "Miel de Abeja Pura Orgánica",
+                categoria: "Gastronomía",
+                precio: 22000,
+                imagen: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?auto=format&fit=crop&q=80&w=500",
+                tienda: "Apiarios del Valle",
+                descripcion: "Miel 100% natural cosechada en reservas naturales cercanas."
+            }
+        ];
+
+        let categoriaActual = 'todos';
+        let textoBusqueda = '';
+
+        const gridProductos = document.getElementById('grid-productos');
+        const buscador = document.getElementById('buscador');
+        const sinResultados = document.getElementById('sin-resultados');
+
+        // Función para renderizar los productos en pantalla
+        function mostrarProductos() {
+            gridProductos.innerHTML = '';
+
+            // Filtrar por categoría y buscador
+            const productosFiltrados = productos.filter(p => {
+                const coincideCategoria = categoriaActual === 'todos' || p.categoria === categoriaActual;
+                const coincideTexto = p.nombre.toLowerCase().includes(textoBusqueda) || 
+                                     p.tienda.toLowerCase().includes(textoBusqueda) || 
+                                     p.descripcion.toLowerCase().includes(textoBusqueda);
+                return coincideCategoria && coincideTexto;
+            });
+
+            if (productosFiltrados.length === 0) {
+                sinResultados.classList.remove('hidden');
+                return;
+            } else {
+                sinResultados.classList.add('hidden');
+            }
+
+            // Crear las tarjetas de productos
+            productosFiltrados.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition flex flex-col justify-between";
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="h-48 overflow-hidden bg-gray-100 relative">
+                            <img src="${prod.imagen}" alt="${prod.nombre}" class="w-full h-full object-cover hover:scale-105 transition duration-300">
+                            <span class="absolute top-2 right-2 bg-indigo-600 text-white text-xs px-2.5 py-1 rounded-full font-medium">${prod.categoria}</span>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-store mr-1"></i>${prod.tienda}</p>
+                            <h3 class="font-bold text-lg text-gray-800 mb-1 leading-snug">${prod.nombre}</h3>
+                            <p class="text-gray-600 text-sm mb-3 line-clamp-2">${prod.descripcion}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex items-center justify-between border-t border-gray-100 mt-2">
+                        <span class="text-indigo-600 font-bold text-lg">$${prod.precio.toLocaleString()}</span>
+                        <a href="https://wa.me/?text=Hola,%20estoy%20interesado%20en%20el%20producto:%20${encodeURIComponent(prod.nombre)}" target="_blank" 
+                           class="bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-3 py-2 rounded-lg transition flex items-center space-x-1.5">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            <span>Contactar</span>
+                        </a>
+                    </div>
+                `;
+                gridProductos.appendChild(card);
+            });
+        }
+
+        // Evento para el buscador
+        buscador.addEventListener('input', (e) => {
+            textoBusqueda = e.target.value.toLowerCase().trim();
+            mostrarProductos();
+        });
+
+        // Función para cambiar de categoría al hacer clic en los botones
+        function filtrarCategoria(categoria) {
+            categoriaActual = categoria;
+
+            // Actualizar estilos de los botones de filtro
+            document.querySelectorAll('.filtro-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase() === categoria.toLowerCase() || (categoria === 'todos' && btn.textContent === 'Todos')) {
+                    btn.className = "filtro-btn px-4 py-1.5 rounded-full bg-indigo-600 text-white text-sm font-medium transition active";
+                } else {
+                    btn.className = "filtro-btn px-4 py-1.5 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition";
+                }
+            });
+
+            mostrarProductos();
+        }
+
+        // Cargar productos al iniciar la página
+        mostrarProductos();
+    </script>
+</body>
+</html>
